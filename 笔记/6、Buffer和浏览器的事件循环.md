@@ -106,7 +106,7 @@ console.log(buffer01)
 
 所以总结一下上面的过程
 
-![image-20221004213549747](D:\studyMaterial\node\笔记\6、Buffer和浏览器的事件循环\image-20221004213549747.png)
+![image-20221004213549747](.\6、Buffer和浏览器的事件循环\image-20221004213549747.png)
 
 
 
@@ -306,7 +306,7 @@ console.log(buffer);	// <Buffer 88 00 00 00 00 00 00 00>
 ```js
 const fs = require('fs');
 
-fs.readFile('./.txt', {encoding: 'utf-8'}, (err, data) => {
+fs.readFile('./foo.txt', {encoding: 'utf-8'}, (err, data) => {
   console.log(data);	// 李银河
 })
 ```
@@ -317,7 +317,7 @@ fs.readFile('./.txt', {encoding: 'utf-8'}, (err, data) => {
 
 ```js
 const fs = require('fs');
-fs.readFile('./test.txt', (err, data) => {
+fs.readFile('./foo.txt', (err, data) => {
   console.log(data);	// <Buffer e6 9d 8e e9 93 b6 e6 b2 b3>
 })
 ```
@@ -462,7 +462,7 @@ sharp('./foo.jpg')
 
 处理成了一个正方形
 
-<img src="D:\studyMaterial\node\笔记\6、Buffer和浏览器的事件循环\image-20221005102948632.png" alt="image-20221005102948632" style="zoom:25%;" />
+<img src=".\6、Buffer和浏览器的事件循环\image-20221005102948632.png" alt="image-20221005102948632" style="zoom:25%;" />
 
 也可以这样
 
@@ -519,7 +519,7 @@ node对buffer做了一个封装，就是第一次的时候，不管三七二十�
 - 这里我们以从字符串创建为例
 - node/lib/buffer.js：290行
 
-![image-20220920204728038](D:\studyMaterial\node\笔记\6、Buffer和浏览器的事件循环\image-20220920204728038.png)
+![image-20220920204728038](.\6、Buffer和浏览器的事件循环\image-20220920204728038.png)
 
 
 
@@ -527,7 +527,7 @@ node对buffer做了一个封装，就是第一次的时候，不管三七二十�
 
 ## fromString的源码
 
-![image-20220920204747942](D:\studyMaterial\node\笔记\6、Buffer和浏览器的事件循环\image-20220920204747942.png)
+![image-20220920204747942](.\6、Buffer和浏览器的事件循环\image-20220920204747942.png)
 
 
 
@@ -542,6 +542,6 @@ node对buffer做了一个封装，就是第一次的时候，不管三七二十�
 - 如果够就直接使用，但是之后要进行 poolOffset的偏移变化；
 - node/lib/buffer.js：428行
 
-![image-20220920204840141](D:\studyMaterial\node\笔记\6、Buffer和浏览器的事件循环\image-20220920204840141.png)
+![image-20220920204840141](.\6、Buffer和浏览器的事件循环\image-20220920204840141.png)
 
-![image-20220920204854563](D:\studyMaterial\node\笔记\6、Buffer和浏览器的事件循环\image-20220920204854563.png)
+![image-20220920204854563](.\6、Buffer和浏览器的事件循环\image-20220920204854563.png)

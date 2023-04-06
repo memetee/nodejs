@@ -20,9 +20,17 @@ Koa官方的介绍：
 
 ## Koa初体验
 
+```
+npm install koa
+```
+
+
+
+
+
 我们来体验一下koa的Web服务器
 
-![image-20221009070338530](D:\studyMaterial\node\笔记\11、koa\image-20221009070338530.png)
+![image-20221009070338530](.\11、koa\image-20221009070338530.png)
 
 ```js
 const Koa = require('koa');
@@ -51,7 +59,7 @@ next：本质上是一个dispatch，类似于之前的next；
 
 - 后续我们学习Koa的源码，来看一下它是一个怎么样的函数；
 
-![image-20221009070912699](D:\studyMaterial\node\笔记\11、koa\image-20221009070912699.png)
+![image-20221009070912699](.\11、koa\image-20221009070912699.png)
 
 ```js
 const Koa = require('koa');
@@ -93,13 +101,40 @@ app.listen('8000', () => {
 })
 ```
 
-![image-20221009071306303](D:\studyMaterial\node\笔记\11、koa\image-20221009071306303.png)
+![image-20221009071306303](.\11、koa\image-20221009071306303.png)
 
 
 
 
 
-![image-20220928142857465](D:\studyMaterial\node\笔记\11、koa\image-20220928142857465.png)
+多个中间件
+
+```js
+const Koa = require('koa');
+
+const app = new Koa();
+
+app.use((ctx, next) => {
+  console.log('middleware 01');
+  next();
+})
+
+app.use((ctx, next) => {
+  console.log('middleware 02');
+  ctx.response.body = 'Hello World';
+})
+
+
+app.listen(8000, () => {
+  console.log('koa服务器启动成功~');
+})
+
+// 响应的也是Hello world
+```
+
+![image-20230402154932171](11、koa/image-20230402154932171.png)
+
+
 
 
 
@@ -121,12 +156,11 @@ koa通过创建的app对象，注册中间件只能通过use方法：
 
   ```js
   app.use('/home', (ctx, next) => {})	// 这种方式也没有提供
-  ```
-
-  ```js
   app.use((ctx, next) => {}, (ctx, next) => {})	//连续注册中间件的方式也是没有提供的
-  ```
-
+```
+  
+  
+  
 - 也就是说，只能通过这种方式注册中间件
 
   ```js
@@ -143,7 +177,7 @@ koa通过创建的app对象，注册中间件只能通过use方法：
 
 - 方式一：根据request自己来判断； 
 
-  ![image-20221009073034837](D:\studyMaterial\node\笔记\11、koa\image-20221009073034837.png)
+  ![image-20221009073034837](.\11、koa\image-20221009073034837.png)
 
   ```js
   const Koa = require('koa');
@@ -163,9 +197,12 @@ koa通过创建的app对象，注册中间件只能通过use方法：
     console.log('koa服务器启动成功~')
   })
   
+  
   ```
 
   
+
+- 上面是如何通过method来判读请求，通过path来判断，那如果是连续注册中间件就需要多写几个app.use(...)
 
 - 方式二：使用第三方路由中间件；
 
@@ -185,9 +222,9 @@ npm install koa-router
 
 在app中将router.routes()注册为中间件：
 
-![image-20221009074737707](D:\studyMaterial\node\笔记\11、koa\image-20221009074737707.png)
+![image-20221009074737707](.\11、koa\image-20221009074737707.png)
 
-![image-20221009074841722](D:\studyMaterial\node\笔记\11、koa\image-20221009074841722.png)
+![image-20221009074841722](.\11、koa\image-20221009074841722.png)
 
 index.js
 
@@ -256,9 +293,9 @@ app.listen('8000', () => {
 
 ```
 
-![image-20221009213816682](D:\studyMaterial\node\笔记\11、koa\image-20221009213816682.png)
+![image-20221009213816682](.\11、koa\image-20221009213816682.png)
 
-![image-20221009214145882](D:\studyMaterial\node\笔记\11、koa\image-20221009214145882.png)
+![image-20221009214145882](.\11、koa\image-20221009214145882.png)
 
 这里可以看到，我们在前面的user.js中封装了两个请求路径，一个是get，另一个是put，但是并没有post，如果我们就想请求post，会给出一个报错，"Not Found", 但是这个请求不友好，我们并不知道哪里错了，所以我们可以使用上面的allowedMethods这个函数，它在user.js中找不到post方法的话，就给给上面这样的报错，link这类的方法也会给出对应的报错。
 
@@ -268,24 +305,41 @@ app.listen('8000', () => {
 
 ## 参数解析：params - query
 
-请求地址：http://localhost:8000/users/123
-
-- 获取params：
+#### 请求的信息
 
 ```js
+const Koa = require('koa');
+
+const app = new Koa();
+
+
 app.use((ctx, next) => {
-  console.log(ctx.request.url);
-  console.log(ctx.request.query);
-  console.log(ctx.request.params);
-  ctx.response.body = 'Hello World';
+  console.log('请求信息url', ctx.request.url);
+  console.log('请求信息query', ctx.request.query);
+  console.log('请求信息params', ctx.request.params);
 })
+
+
+app.listen(8000, () => {
+  console.log('服务器启动成功');
+})
+
+/**
+ * 请求信息url /production/503?name=wts
+ * 请求信息query [Object: null prototype] { name: 'wts' }
+ * 请求信息params undefined
+ */
 ```
 
-注意，这种写法，不能解析params，或者说解析params比较麻烦，需要自己切割url，一般要拿到params，是通过路由的
+![image-20230402161539665](11、koa/image-20230402161539665.png)
+
+
+
+注意，这里的query我们是可以直接用的，这种写法，不能解析params和query，或者说解析params和query比较麻烦，需要自己切割url，一般要拿到params和query，是通过路由的，因为我们需要通过监听path的方式来监听请求，所以我们需要在路由中。
 
 这样来请求
 
-![image-20221009215914657](D:\studyMaterial\node\笔记\11、koa\image-20221009215914657.png)
+![image-20221009215914657](.\11、koa\image-20221009215914657.png)
 
 ```js
 const Koa = require('koa');
@@ -315,6 +369,8 @@ app.listen('8000', '127.0.0.1', () => {
  */
 ```
 
+
+
 这样我们可以通过路由的方式拿到params传参，也可以通过query的方式传参，还可以拿到url地址
 
 
@@ -323,7 +379,7 @@ app.listen('8000', '127.0.0.1', () => {
 
 请求地址：http://localhost:8000/login 
 
-![image-20221009220739579](D:\studyMaterial\node\笔记\11、koa\image-20221009220739579.png)
+![image-20221009220739579](.\11、koa\image-20221009220739579.png)
 
 ```js
 
@@ -377,20 +433,18 @@ app.listen('8000', '127.0.0.1', () => {
 
 这个请求的解析和上面是一样的
 
-但是form-data是不能解析到的
-
 
 
 ## 参数解析：x-www-form-urlencoded
 
 当然，我们的urlencode也是可以解析的
 
-![image-20221009222028517](D:\studyMaterial\node\笔记\11、koa\image-20221009222028517.png)
+![image-20221009222028517](.\11、koa\image-20221009222028517.png)
 
 ```js
 
 const Koa = require('koa');
-const bodyParser = require('koa-bodyParser');
+const bodyParser = require('koa-bodyparser');
 const app = new Koa();
 
 // 在解析body前使用
@@ -408,13 +462,13 @@ app.listen('8000', '127.0.0.1', () => {
 
 事实上，这个和解析json是一样的
 
-
+但是form-data是不能解析到的
 
 ## 参数解析：form-data
 
 ### form-data传入text
 
-![image-20221009224206452](D:\studyMaterial\node\笔记\11、koa\image-20221009224206452.png)
+![image-20221009224206452](.\11、koa\image-20221009224206452.png)
 
 这里传的是text，并不是文件
 
@@ -446,7 +500,7 @@ app.listen('8000', '127.0.0.1', () => {
 
 ### from-data传入文件
 
-![image-20221009225815256](D:\studyMaterial\node\笔记\11、koa\image-20221009225815256.png)
+![image-20221009225815256](.\11、koa\image-20221009225815256.png)
 
 请求，这里传入一个文件，注意文件名
 
@@ -536,6 +590,8 @@ app.listen(8000, () => {
 
 ## 数据的响应
 
+### 数据响应类型
+
 输出结果：body将响应主体设置为以下之一： 
 
 - string ：字符串数据 
@@ -545,15 +601,12 @@ app.listen(8000, () => {
 - null ：不输出任何内容 
 - 如果response.status尚未设置，Koa会自动将状态设置为200或204。 
 
-请求状态：status
-
-![image-20221010065202892](D:\studyMaterial\node\笔记\11、koa\image-20221010065202892.png)
+![image-20221010065202892](.\11、koa\image-20221010065202892.png)
 
 ```js
 const Koa = require('koa');
 const app = new Koa();
 app.use((ctx, next) => {
-  ctx.response.body = 'Hello World';
   // 响应对象
   ctx.response.body = {
     name: "wts",
@@ -572,6 +625,8 @@ app.listen(8000, () => {
 ```
 
 
+
+### 响应码
 
 响应结果的同时，设置状态码
 
@@ -663,13 +718,13 @@ app.listen(8000, () => {
 })
 ```
 
-![image-20221010071426436](D:\studyMaterial\node\笔记\11、koa\image-20221010071426436.png)
+![image-20221010071426436](.\11、koa\image-20221010071426436.png)
 
 
 
 ## 创建Koa的过程
 
-![image-20221010071658843](D:\studyMaterial\node\笔记\11、koa\image-20221010071658843.png)
+![image-20221010071658843](.\11、koa\image-20221010071658843.png)
 
 
 
@@ -677,7 +732,7 @@ app.listen(8000, () => {
 
 ## 开启监听
 
-![image-20221010071722149](D:\studyMaterial\node\笔记\11、koa\image-20221010071722149.png)
+![image-20221010071722149](.\11、koa\image-20221010071722149.png)
 
 
 
@@ -685,7 +740,7 @@ app.listen(8000, () => {
 
 ## 注册中间件
 
-![image-20221010071741411](D:\studyMaterial\node\笔记\11、koa\image-20221010071741411.png)
+![image-20221010071741411](.\11、koa\image-20221010071741411.png)
 
 
 
@@ -693,7 +748,7 @@ app.listen(8000, () => {
 
 ## 监听回调
 
-![image-20221010071802376](D:\studyMaterial\node\笔记\11、koa\image-20221010071802376.png)
+![image-20221010071802376](.\11、koa\image-20221010071802376.png)
 
 
 
@@ -701,7 +756,7 @@ app.listen(8000, () => {
 
 ## compose方法
 
-![image-20221010071827251](D:\studyMaterial\node\笔记\11、koa\image-20221010071827251.png)
+![image-20221010071827251](.\11、koa\image-20221010071827251.png)
 
 
 
@@ -888,7 +943,7 @@ koa是简洁和自由的，它只包含最核心的功能，并不会对我们�
     })
     ```
   
-    ![image-20221010202821378](D:\studyMaterial\node\笔记\11、koa\image-20221010202821378.png)
+    ![image-20221010202821378](.\11、koa\image-20221010202821378.png)
   
     为什么koa的同步也没有问题，是因为它每次next的时候，都会通过递归的方式不断的调用中间件，然后会一个一个的回退，到最后所有的中间件执行完了以后就能回到ctx.body = ctx.message
   
@@ -928,7 +983,7 @@ koa是简洁和自由的，它只包含最核心的功能，并不会对我们�
     })
     ```
   
-    ![image-20221010203759075](D:\studyMaterial\node\笔记\11、koa\image-20221010203759075.png)
+    ![image-20221010203759075](.\11、koa\image-20221010203759075.png)
   
 - 注意，koa中可以通过async和await来处理异步操作，但是在express中不行
 
@@ -945,7 +1000,7 @@ koa是简洁和自由的，它只包含最核心的功能，并不会对我们�
 
 在这个过程中，koa和express有不同，在koa中，等到所有的中间件执行完了以后才会执行res.end() 也就是中间我们可能会执行 ctx.body = 123， 最后等所有的执行完了以后，ctx.body才会通过res.end发送出去，这个过程也就是洋葱模型
 
-![image-20221010224223162](D:\studyMaterial\node\笔记\11、koa\image-20221010224223162.png)
+![image-20221010224223162](.\11、koa\image-20221010224223162.png)
 
 其实express也是洋葱模型的，
 
