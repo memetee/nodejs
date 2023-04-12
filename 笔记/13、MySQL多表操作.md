@@ -1,4 +1,4 @@
-
+​    
 
 ## 聚合函数
 
@@ -318,7 +318,13 @@ INSERT INTO `brand` (name, website, worldRank) VALUES ('Google', 'www.google.com
 
   ```sql
   -- brand_id引用了brand这个表里面的id字段
-  FOREIGN KEY (brand_id) REFERENCES brand(id);
+  CREATE TABLE IF NOT EXISTS `bran`(
+      `id` INT PRIMARY KEY AUTO_INCREMENT,
+      `name` VARCHAR(20) NOT NULL,
+      `brand_id` REFERENCES brand(id),
+  	FOREIGN KEY (brand_id) REFERENCES brand(id);
+  );
+  
   ```
 
 - 如果是表已经创建好，额外添加外键：
@@ -329,6 +335,10 @@ INSERT INTO `brand` (name, website, worldRank) VALUES ('Google', 'www.google.com
   ```
 
 - 注意，必须先添加这个字段，然后再给这个字段添加为外键
+
+
+
+> 注意，添加外键字段之前需要先有这个字段
 
 
 
@@ -728,6 +738,10 @@ UNION
 
 
 
+查询没有交集的地方
+
+![image-20230407222606774](13、MySQL多表操作/image-20230407222606774.png)
+
 ```sql
 # 除去有交集的地方
 (SELECT * FROM `products` LEFT JOIN `brand` ON `products`.brand_id = `brand`.id WHERE `brand`.id IS NULL) UNION
@@ -804,6 +818,9 @@ CREATE TABLE IF NOT EXISTS `students_select_courses`(
     course_id INT NOT NULL,
     FOREIGN KEY (student_id) REFERENCES students(id) ON UPDATE CASCADE,
     FOREIGN KEY (course_id) REFERENCES courses(id) ON UPDATE CASCADE
+    
+    -- 这样写是联合主键
+    -- PRIMARY KEY (student_id, course_id)
 );
 
 # 学生选课
@@ -811,9 +828,9 @@ CREATE TABLE IF NOT EXISTS `students_select_courses`(
 INSERT INTO `students_select_courses` (student_id, course_id) VALUES(1, 1);
 INSERT INTO `students_select_courses` (student_id, course_id) VALUES(1, 3);
 INSERT INTO `students_select_courses` (student_id, course_id) VALUES(1, 4);
--- lilei选修了 语文和数学和历史
+-- lilei选修了 语文 历史
 INSERT INTO `students_select_courses` (student_id, course_id) VALUES (3, 2);
-INSERT INTO `students_select_courses` (student_id, course_id) VALUES (1, 4);
+INSERT INTO `students_select_courses` (student_id, course_id) VALUES (3, 4);
 -- lily选择了数学，历史，语文
 INSERT INTO `students_select_courses` (student_id, course_id) VALUES(5, 2);
 INSERT INTO `students_select_courses` (student_id, course_id) VALUES(5, 3);
@@ -994,7 +1011,23 @@ SELECT * FROM products LEFT JOIN brand ON products.brand_id = brand.id;
 
 ![image-20221020065026787](.\13、MySQL多表操作\image-20221020065026787.png)
 
-
+> 上面的图中，这些品牌信息不应该和价格，名称在同一个层级，它们应该是一个对象
+>
+> ```js
+> {
+>     id: 1,
+>     name: '华为 meta30',
+>     brand: [
+>         {
+>            url: '...',
+>            website: '...'
+>         }
+>         ...
+>     ]
+> }
+> ```
+>
+> 
 
 
 
@@ -1075,7 +1108,7 @@ SELECT
 	stu.age,
 JSON_ARRAYAGG(JSON_OBJECT('id', cs.id, 'name', cs.name, 'price', cs.price)) AS course
 FROM `students` AS `stu`
-JOIN `students_select_courses` AS ssc ON stu.id = ssc.student_id
+JOIN `students_select_courses` A S ssc ON stu.id = ssc.student_id
 JOIN `courses` AS cs ON ssc.course_id = cs.id
 GROUP BY stu.id;
 ```

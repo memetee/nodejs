@@ -65,6 +65,23 @@ Coderhub旨在创建一个程序员分享生活动态的平台。
 
 
 
+创建用户表sql
+
+```sql
+
+CREATE TABLE IF NOT EXISTS `users` (
+	id INT PRIMARY KEY AUTO_INCREMENT,
+    name VARCHAR(30) NOT NULL UNIQUE,
+    password VARCHAR(50) NOT NULL,
+    createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    updatedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+);
+```
+
+
+
+
+
 
 
 
