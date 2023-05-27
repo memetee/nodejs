@@ -62,8 +62,8 @@ server.listen(8888, () => {
 
 上面我们已经看到，创建Server时会 传入一个回调函数，这个回调函数在 被调用时会传入两个参数：
 
-- req：request请求对象，包含请求相 关的信息；
-- res：response响应对象，包含我们 要发送给客户端的信息；
+- req：request请求对象，包含请求相关的信息；
+- res：response响应对象，包含我们要发送给客户端的信息；
 
 
 
@@ -652,7 +652,7 @@ content-length：文件的大小和长度 （例如可以判断图片上传多�
 - http是基于TCP协议的，但是通常在进行一次请求和响应结束后会立刻中断；
 - 在http1.0中，如果想要继续保持连接：
   - 浏览器需要在请求头中添加 connection: keep-alive；
-  - 服务器需要在响应头中添加 connection:keey-alive；
+  - 服务器需要在响应头中添加 connection:keep-alive；
   - 当客户端再次放请求时，就会使用同一个连接，直接一方中断连接；
 - 在http1.1中，所有连接默认是 connection: keep-alive的；
   - 不同的Web服务器会有不同的保持 keep-alive的时间；

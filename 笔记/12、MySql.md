@@ -551,7 +551,7 @@ MySQL的字符串类型表示方式如下：
 
 ### 唯一：UNIQUE
 
-某些字段在开发中我们希望是唯一的，不会重复的，比如手机号码、身份证号码等，这个字段我们可以使用UNIQUE来约 束：
+某些字段在开发中我们希望是唯一的，不会重复的，比如手机号码、身份证号码等，这个字段我们可以使用UNIQUE来约束：
 
 使用UNIQUE约束的字段在表中必须是不同的；
 
@@ -1025,7 +1025,7 @@ INSERT INTO `user` (name, telphone)
 
 我们可以发现，没有插入的字段默认是null
 
-如果我们不希望它为null，可以这样来做
+如果我们不希望它为null，可以这样来做 
 
 需求：createTime和updateTime可以自动设置值
 
@@ -1093,7 +1093,7 @@ ADD表示增加字段，modify表示修改字段
 删除数据：
 
 ```sql
-# 删除所有数据，也就是删除一个表
+# 删除所有数据，也就是删除一个表中所有数据，但是不是删除表
 DELETE FROM `user`;
 ```
 
@@ -1322,7 +1322,7 @@ SELECT * FROM `products` WHERE price >= 2000;
 # 价格等于3399的手机
 SELECT * FROM `products` WHERE price = 3399;
 # 价格不等于3399的手机
-SELECT * FROM `products` WHERE price = 3399;
+SELECT * FROM `products` WHERE price != 3399;
 # 查询华为品牌的手机
 SELECT * FROM `products` WHERE `brand` = '华为';
 ...

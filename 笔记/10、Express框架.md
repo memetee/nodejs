@@ -256,6 +256,8 @@ app.listen(8000, () => {
   ![image-20221006162848816](.\10、Express框架\image-20221006162848816.png)
 
   可以看到，响应的是对象，也是json数据
+  
+  如果相应的是字符串，name可以用res.end，其他的类型都需要使用res.json()来相应数据
 
 
 
@@ -565,8 +567,6 @@ const express = require('express');
 
 const app = express();
 
-
-
 // 只会匹配路径是/home的请求
 app.use('/home', (req, res, next) => {
   console.log('home middleware 01')
@@ -606,7 +606,6 @@ app.listen('8000', '127.0.0.1', () => {
 
 ```js
 const express = require('express');
-
 const app = express();
 
 // 必须是get请求，并且请求的路径是/home
@@ -626,7 +625,6 @@ app.listen('8000', '127.0.0.1', () => {
 这样的话，两个中间件都可以匹配上
 
 ```js
-
 const express = require('express');
 
 const app = express();
@@ -1632,7 +1630,7 @@ app.listen('8000', '127.0.0.1', () => {
 
 ![image-20221008225053304](.\10、Express框架\image-20221008225053304.png)
 
-可以看到res.json并没有生效
+可以看到res.json并没有生效，205导致不生效的（http状态码 205 （**重置内容**） 服务器成功处理了请求，但没有返回任何内容。）
 
 那么问题来了，如果既想状态码生效，又想转成json要怎么办呢？
 
@@ -1836,8 +1834,6 @@ app.listen('8000', () => {
 方案二：
 
 ```js
-
-
 const express = require('express');
 
 const app = express();
@@ -1866,7 +1862,6 @@ app.post('/register', (req, res, next) => {
 app.use((err, req, res, next) => {
   let status = 400;
   let message = '';
-  console.log('看看好啦', err);
   switch (err.message) {
     case USERNAME_DOES_NOT_EXISTS:
       message = 'username login success~';
